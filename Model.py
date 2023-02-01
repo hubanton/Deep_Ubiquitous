@@ -12,8 +12,8 @@ class MyRNN(torch.nn.Module):
 
     def forward(self, x):
 
-        output = self.rnn_layer(x)
+        output, hidden_state = self.rnn_layer(x)
 
-        output = self.fc(output)
+        output = self.fc(output[:, -1, :])
 
         return output

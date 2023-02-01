@@ -2,7 +2,9 @@ from glob import glob
 import os
 import pandas as pd
 import numpy as np
+import torch
 from scipy import interpolate
+from torch.utils.data import DataLoader
 
 
 def get_patient_data(use_interpolation=False, binarize=False):
@@ -70,3 +72,33 @@ def get_patient_data(use_interpolation=False, binarize=False):
     X = patient_data.drop(columns=[0, 8])
 
     return X, y
+
+
+class SequenceDataset(torch.utils.data.Dataset):
+
+    def __init__(self, sequences, labels):
+        self.sequences = sequences
+        self.labels = labels
+        self.num_examples = len(self.sequences)
+
+    def __getitem__(self, idx):
+        return self.sequences[idx], self.labels[idx]
+
+    def __len__(self):
+        return self.num_examples
+
+
+def get_dataloaders(X, y, batch_size=16, shuffle=True, drop_last=True):
+    full_dataset = SequenceDataset(X, y)
+
+    train_size = int(0.8 * len(full_dataset))
+    test_size = len(full_dataset) - train_size
+    train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, test_size])
+
+    train_dataloader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=shuffle,
+                                  drop_last=drop_last)
+
+    val_dataloader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False,
+                                drop_last=False)
+
+    return train_dataloader, val_dataloader
