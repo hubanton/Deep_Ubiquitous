@@ -27,12 +27,12 @@ def get_patient_data(use_interpolation=False, binarize=False):
 
             interpolated_df[8] = round(interpolated_df[8]).astype(int)
 
-            interpolated_df['file_name'] = record.split('/')[-1]
+            interpolated_df['file_name'] = record.split(os.sep)[-1]
             interpolated_df['frame_id'] = interpolated_df.index
             patient_data = pd.concat((patient_data, interpolated_df), axis=0)
         else:
             record_data = pd.read_csv(record, header=None)
-            record_data['file_name'] = record.split('/')[-1]
+            record_data['file_name'] = record.split(os.sep)[-1]
             record_data['frame_id'] = record_data.index
             patient_data = pd.concat((patient_data, record_data), axis=0)
 
@@ -50,12 +50,12 @@ def get_patient_data(use_interpolation=False, binarize=False):
 
             interpolated_df[8] = round(interpolated_df[8]).astype(int)
 
-            interpolated_df['file_name'] = record.split('/')[-1]
+            interpolated_df['file_name'] = record.split(os.sep)[-1]
             interpolated_df['frame_id'] = interpolated_df.index
             patient_data = pd.concat((patient_data, interpolated_df), axis=0)
         else:
             record_data = pd.read_csv(record, header=None)
-            record_data['file_name'] = record.split('/')[-1]
+            record_data['file_name'] = record.split(os.sep)[-1]
             record_data['frame_id'] = record_data.index
             patient_data = pd.concat((patient_data, record_data), axis=0)
 
