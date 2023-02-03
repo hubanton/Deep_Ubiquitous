@@ -5,6 +5,7 @@ import numpy as np
 import torch
 from scipy import interpolate
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 
 def get_patient_data(use_interpolation=False, binarize=False):
@@ -102,3 +103,25 @@ def get_dataloaders(X, y, batch_size=16, shuffle=True, drop_last=True):
                                 drop_last=False)
 
     return train_dataloader, val_dataloader
+
+
+def create_windows(X, y, window_size, hop_size):
+
+    output = torch.tensor([])  # shape [num_files*num_sliding_widows, window_size, features]
+    labels = []
+    for file in tqdm(X["file_name"].unique()):
+        features_df = X[X['file_name'] == file]
+        labels_df = y[y['file_name'] == file].values
+        last_frame = np.max(X[X['file_name'] == file]["frame_id"])
+        for pivot in range(0, last_frame - window_size, hop_size):
+            labels.append(labels_df[pivot + window_size - 1][0])
+            window = torch.tensor(
+                features_df[features_df["frame_id"].between(pivot, pivot + window_size, inclusive="left")].drop(
+                    ["frame_id", "file_name"], axis=1).values)
+            output = torch.cat((output, torch.unsqueeze(window, dim=0)), dim=0)
+
+    labels = torch.tensor(labels) - 1
+    output = output.to(torch.float32)
+
+    torch.save(output, f'X_data_ws_{window_size}_hs_{hop_size}.pt')
+    torch.save(labels, f'y_data_ws_{window_size}_hs_{hop_size}.pt')
