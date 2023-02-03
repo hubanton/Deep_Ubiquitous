@@ -113,9 +113,8 @@ def train_and_evaluate(module, criterion, optimizer, train_loader, epochs, valid
 
         pbar.set_postfix({key: value[-1] for key, value in epoch_performance.items()})
 
-    # Write YAML file
-    with io.open('performance.yaml', 'w', encoding='utf8') as outfile:
-        yaml.dump(epoch_performance, outfile, default_flow_style=False, allow_unicode=True)
+    with open(f"Results_({savefile_name}).txt", "w") as text_file:
+        text_file.write(str(epoch_performance))
 
     return epoch_performance
 

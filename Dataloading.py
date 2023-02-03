@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import torch
 from scipy import interpolate
+from scipy.fft import fft
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -123,5 +124,31 @@ def create_windows(X, y, window_size, hop_size):
     labels = torch.tensor(labels) - 1
     output = output.to(torch.float32)
 
-    torch.save(output, f'X_data_ws_{window_size}_hs_{hop_size}.pt')
-    torch.save(labels, f'y_data_ws_{window_size}_hs_{hop_size}.pt')
+    torch.save(output, f'data/X_data_ws_{window_size}_hs_{hop_size}.pt')
+    torch.save(labels, f'data/y_data_ws_{window_size}_hs_{hop_size}.pt')
+
+
+def add_features(X, add_acceleration_features=True, add_freq_domain_features=True):
+
+    if add_acceleration_features:
+        phi = torch.unsqueeze(
+            torch.arctan(torch.div(X[:, :, 0], torch.sqrt(torch.pow(X[:, :, 1], 2) + torch.pow(X[:, :, 2], 2)))), dim=-1)
+        X = torch.cat((X, phi), dim=-1)
+
+        alpha = torch.unsqueeze(torch.arctan(torch.div(X[:, :, 2], X[:, :, 1])), dim=-1)
+        X = torch.cat((X, alpha), dim=-1)
+
+        beta = torch.unsqueeze(torch.arctan(torch.div(X[:, :, 2], X[:, :, 0])), dim=-1)
+        X = torch.cat((X, beta), dim=-1)
+
+    if add_freq_domain_features:
+        fft_frontal = fft(X.numpy()[:, :, 0])
+        fft_vertical = fft(X.numpy()[:, :, 1])
+        fft_lateral = fft(X.numpy()[:, :, 2])
+
+        for fft_axis in [fft_lateral, fft_vertical, fft_frontal]:
+            for method in [lambda x: np.sum(np.square(x)), np.max, np.min, np.mean]:
+                feature = torch.unsqueeze(torch.tensor(np.real(method(fft_axis, axis=1))).repeat(X.shape[1], 1).T, dim=-1)
+                X = torch.cat((X, feature), dim=-1)
+
+    return X

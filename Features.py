@@ -1,7 +1,7 @@
 from Dataloading import create_windows, get_patient_data
 
-window_sizes = [400, 1200, 2000, 4000]
-hop_sizes = [80, 240, 400, 800]
+window_sizes = [200, 200, 400, 400, 800, 800]
+hop_sizes = [20, 40, 40, 80, 80, 160]
 
 X, y = get_patient_data(use_interpolation=True)
 
