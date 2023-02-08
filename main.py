@@ -24,33 +24,43 @@ for win_size, hop_size in zip(window_sizes, hop_sizes):
     X = torch.load(f'data/X_data_ws_{win_size}_hs_{hop_size}.pt')
     y = torch.load(f'data/y_data_ws_{win_size}_hs_{hop_size}.pt')
 
-    performance = rnn_training(X, y, f'Window size: {win_size}, Hop size: {hop_size}', device, torch.nn.RNN, epochs=100)
+    performance = rnn_training(X, y, f'Window size {win_size}, Hop size {hop_size}', device, torch.nn.RNN, epochs=100)
+
+    print(performance)
 
     window_performances.append(max(performance['macro']))
 
 best_idx = np.argmax(np.array(window_performances))
 
+best_idx = 0
+
 print(f"Best window size and hop size: {window_sizes[best_idx]}, {hop_sizes[best_idx]}")
 
-X = torch.load(f'X_data_ws_{window_sizes[best_idx]}_hs_{hop_sizes[best_idx]}.pt')
-y = torch.load(f'y_data_ws_{window_sizes[best_idx]}_hs_{hop_sizes[best_idx]}.pt')
+X = torch.load(f'data/X_data_ws_{window_sizes[best_idx]}_hs_{hop_sizes[best_idx]}.pt')
+y = torch.load(f'data/y_data_ws_{window_sizes[best_idx]}_hs_{hop_sizes[best_idx]}.pt')
 
 feat_performances = []
 
-for use_acc_features in [True, False]:
-    for use_freq_domain_features in [True, False]:
-        new_X = add_features(X, add_acceleration_features=use_acc_features,
-                             add_freq_domain_features=use_freq_domain_features)
+# for use_acc_features in [True, False]:
+#     for use_freq_domain_features in [True, False]:
+#         new_X = add_features(X, add_acceleration_features=use_acc_features,
+#                              add_freq_domain_features=use_freq_domain_features)
+#
+#         input_size = 7 + 3 * use_acc_features + 12 * use_freq_domain_features
+#
+#         performance = rnn_training(new_X, y, f'acc_f {use_acc_features}, freq_f {use_freq_domain_features}', device, torch.nn.RNN, in_features=input_size)
+#
+#         feat_performances.append(max(performance['macro']))
+#
+# best_tuple = [(True, True), (True, False), (False, True), (False, False)][np.argmax(np.array(feat_performances))]
 
-        performance = rnn_training(new_X, y, f'acc_f: {use_acc_features}, freq_f: {use_freq_domain_features}', device, torch.nn.RNN)
-
-        feat_performances.append(max(performance['macro']))
-
-best_tuple = [(True, True), (True, False), (False, True), (False, False)][np.argmax(np.array(feat_performances))]
+best_tuple = (True, False)
 
 print(f"best combination: {best_tuple}")
 
 best_X = add_features(X, add_acceleration_features=best_tuple[0], add_freq_domain_features=best_tuple[1])
+
+input_size = 7 + 3 * best_tuple[0] + 12 * best_tuple[1]
 
 models = [torch.nn.RNN, torch.nn.LSTM, torch.nn.GRU]
 model_names = ['RNN', 'LSTM', 'GRU']
@@ -58,7 +68,7 @@ model_names = ['RNN', 'LSTM', 'GRU']
 model_performances = []
 
 for model, model_name in zip(models, model_names):
-    performance = rnn_training(X, y, model_name, device, model)
+    performance = rnn_training(best_X, y, model_name, device, model, in_features=input_size)
 
     model_performances.append(max(performance['macro']))
 

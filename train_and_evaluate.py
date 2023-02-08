@@ -33,7 +33,7 @@ def train_step(module, criterion, optimizer, x, y, scheduler, device, scaler):
 
 
 def train_and_evaluate(module, criterion, optimizer, train_loader, epochs, validation_loader, savefile_name,
-                       device, scaler,use_last_module=False, scheduler=None):
+                       device, scaler, use_last_module=False, scheduler=None):
     # if we want to continue training check if last trained module exists and the load it ( for 1 g) )
     if use_last_module:
         if os.path.exists(savefile_name + '.pth'):
@@ -130,5 +130,7 @@ def rnn_training(X, y, savefile_name, device, backbone, in_features=7, hidden_fe
 
     grad_scaler = torch.cuda.amp.GradScaler()
 
-    train_and_evaluate(model, criterion, optimizer, train_dataloader, epochs, val_dataloader, savefile_name,
-                       device, grad_scaler, use_last_module=False, scheduler=None)
+    performance = train_and_evaluate(model, criterion, optimizer, train_dataloader, epochs, val_dataloader,
+                                     savefile_name, device, grad_scaler, use_last_module=False, scheduler=None)
+
+    return performance

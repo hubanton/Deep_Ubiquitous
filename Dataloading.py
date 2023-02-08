@@ -147,8 +147,8 @@ def add_features(X, add_acceleration_features=True, add_freq_domain_features=Tru
         fft_lateral = fft(X.numpy()[:, :, 2])
 
         for fft_axis in [fft_lateral, fft_vertical, fft_frontal]:
-            for method in [lambda x: np.sum(np.square(x)), np.max, np.min, np.mean]:
-                feature = torch.unsqueeze(torch.tensor(np.real(method(fft_axis, axis=1))).repeat(X.shape[1], 1).T, dim=-1)
+            for method in [lambda x, axis: np.sum(np.square(x), axis=axis), np.max, np.min, np.mean]:
+                feature = torch.unsqueeze(torch.tensor(np.real(method(fft_axis, 1))).repeat(X.shape[1], 1).T, dim=-1)
                 X = torch.cat((X, feature), dim=-1)
 
     return X
