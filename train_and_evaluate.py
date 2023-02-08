@@ -1,12 +1,12 @@
-import io
 import os
+
 import numpy as np
-import torch
 import sklearn.metrics as sk
-import yaml
+import torch
 from tqdm import tqdm
-from Dataloading import get_dataloaders
-from Model import MyRNN
+
+from data_loading import get_dataloaders
+from rnn import MyRNN
 
 
 def train_step(module, criterion, optimizer, x, y, scheduler, device, scaler):

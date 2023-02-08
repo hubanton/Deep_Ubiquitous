@@ -1,11 +1,12 @@
 import ast
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
 metrics = ['accuracy', 'weighted', 'bal_accuracy', 'macro']
 
 
-def print_attribute_results():
+def attribute_results_to_csv():
     results = []
 
     for metric in metrics:
@@ -20,10 +21,10 @@ def print_attribute_results():
 
         results.append(features)
     df = pd.DataFrame(results, columns=['Used Attributes:' 'Acc + Freq', 'Frequency', 'Acc', 'Default'], index=metrics)
-    print(df.to_latex())
+    df.to_csv('attributes.csv')
 
 
-def print_window_size_results():
+def window_size_results_to_csv():
     results = []
     window_size = [200, 200, 400, 400, 800, 800]
     hop_sizes = [20, 40, 40, 80, 80, 160]
@@ -39,7 +40,7 @@ def print_window_size_results():
         results.append(features)
     columns = [f"{window_size, hop_size}" for window_size, hop_size in zip(window_size, hop_sizes)]
     df = pd.DataFrame(results, columns=columns, index=metrics)
-    print(df)
+    df.to_csv('window_sizes.csv')
 
 
 def plot_model_results():
@@ -59,6 +60,6 @@ def plot_model_results():
         plt.clf()
 
 
-# print_attribute_results()
-# print_window_size_results()
+attribute_results_to_csv()
+window_size_results_to_csv()
 plot_model_results()

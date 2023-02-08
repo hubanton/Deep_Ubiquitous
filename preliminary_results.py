@@ -1,13 +1,8 @@
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import f1_score, accuracy_score, balanced_accuracy_score, confusion_matrix
 from imblearn.over_sampling import SMOTE
-from Dataloading import get_patient_data
-import lazypredict
 from lazypredict.Supervised import LazyClassifier
+from sklearn.model_selection import train_test_split
+
+from data_loading import get_patient_data
 
 X, y = get_patient_data(use_interpolation=False)
 
@@ -26,7 +21,7 @@ models, predictions = clf.fit(X_train, X_test, y_train, y_test)
 
 models.to_csv("Model_results.csv")
 
-print(models)
+# --------------------------------- If you only want to use a specific model you can pick one from below ---------------
 
 # print("Results on Linear Regression: \n")
 #
@@ -139,5 +134,3 @@ print(models)
 # print(f"Confusion matrix:\n {confusion_matrix(y_test, result)}")
 
 # ----------------------------------------------------------------------------------------------------------------------
-
-

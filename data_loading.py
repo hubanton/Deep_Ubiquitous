@@ -1,7 +1,8 @@
-from glob import glob
 import os
-import pandas as pd
+from glob import glob
+
 import numpy as np
+import pandas as pd
 import torch
 from scipy import interpolate
 from scipy.fft import fft
@@ -107,7 +108,6 @@ def get_dataloaders(X, y, batch_size=16, shuffle=True, drop_last=True):
 
 
 def create_windows(X, y, window_size, hop_size):
-
     output = torch.tensor([])  # shape [num_files*num_sliding_widows, window_size, features]
     labels = []
     for file in tqdm(X["file_name"].unique()):
@@ -129,10 +129,10 @@ def create_windows(X, y, window_size, hop_size):
 
 
 def add_features(X, add_acceleration_features=True, add_freq_domain_features=True):
-
     if add_acceleration_features:
         phi = torch.unsqueeze(
-            torch.arctan(torch.div(X[:, :, 0], torch.sqrt(torch.pow(X[:, :, 1], 2) + torch.pow(X[:, :, 2], 2)))), dim=-1)
+            torch.arctan(torch.div(X[:, :, 0], torch.sqrt(torch.pow(X[:, :, 1], 2) + torch.pow(X[:, :, 2], 2)))),
+            dim=-1)
         X = torch.cat((X, phi), dim=-1)
 
         alpha = torch.unsqueeze(torch.arctan(torch.div(X[:, :, 2], X[:, :, 1])), dim=-1)
