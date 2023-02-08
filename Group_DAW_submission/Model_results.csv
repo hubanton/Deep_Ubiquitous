@@ -1,0 +1,24 @@
+Model,Accuracy,Balanced Accuracy,F1 Score
+LGBMClassifier,0.985,0.925,0.985
+BaggingClassifier,0.985,0.924,0.985
+RandomForestClassifier,0.986,0.921,0.986
+ExtraTreesClassifier,0.987,0.919,0.986
+DecisionTreeClassifier,0.981,0.917,0.98
+KNeighborsClassifier,0.981,0.909,0.98
+ExtraTreeClassifier,0.974,0.899,0.974
+SVC,0.969,0.821,0.965
+QuadraticDiscriminantAnalysis,0.953,0.804,0.951
+GaussianNB,0.941,0.736,0.936
+AdaBoostClassifier,0.714,0.701,0.738
+NearestCentroid,0.847,0.675,0.86
+LogisticRegression,0.923,0.641,0.91
+CalibratedClassifierCV,0.922,0.638,0.909
+Perceptron,0.849,0.59,0.855
+SGDClassifier,0.909,0.581,0.881
+LinearSVC,0.911,0.566,0.886
+LinearDiscriminantAnalysis,0.91,0.565,0.887
+PassiveAggressiveClassifier,0.904,0.559,0.888
+BernoulliNB,0.883,0.544,0.865
+RidgeClassifier,0.899,0.492,0.86
+RidgeClassifierCV,0.899,0.492,0.86
+DummyClassifier,0.689,0.25,0.562
